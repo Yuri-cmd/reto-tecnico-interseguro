@@ -21,7 +21,14 @@ func getEnv(key, fallback string) string {
 
 func main() {
 	port := getEnv("PORT", "3000")
+	// NODE_API_HOST (solo host, p.ej. "reto-node-api.onrender.com") tiene
+	// prioridad para despliegues en la nube, donde Render solo puede
+	// inyectar el hostname del otro servicio, no una URL completa.
+	// NODE_API_URL (URL completa) se usa para docker-compose local.
 	nodeAPIURL := getEnv("NODE_API_URL", "http://localhost:4000/api/estadisticas")
+	if host := os.Getenv("NODE_API_HOST"); host != "" {
+		nodeAPIURL = "https://" + host + "/api/estadisticas"
+	}
 	jwtSecret := getEnv("JWT_SECRET", "dev-secret-cambiar-en-produccion")
 	demoUser := getEnv("DEMO_USER", "admin")
 	demoPass := getEnv("DEMO_PASS", "admin123")

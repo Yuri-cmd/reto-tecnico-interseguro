@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: reto-node-api
+    runtime: docker
+    plan: free
+    rootDir: node-api
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: reto-go-api
+    runtime: docker
+    plan: free
+    rootDir: go-api
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: DEMO_USER
+        value: admin
+      - key: DEMO_PASS
+        value: admin123
+      - key: JWT_SECRET
+        fromService:
+          type: web
+          name: reto-node-api
+          envVarKey: JWT_SECRET
+      - key: NODE_API_HOST
+        fromService:
+          type: web
+          name: reto-node-api
+          property: host
