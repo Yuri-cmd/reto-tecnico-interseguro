@@ -1,0 +1,29 @@
+services:
+  node-api:
+    build: ./node-api
+    container_name: reto-node-api
+    environment:
+      PORT: 4000
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-cambiar-en-produccion}
+    ports:
+      - "4000:4000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  go-api:
+    build: ./go-api
+    container_name: reto-go-api
+    environment:
+      PORT: 3000
+      NODE_API_URL: http://node-api:4000/api/estadisticas
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-cambiar-en-produccion}
+      DEMO_USER: ${DEMO_USER:-admin}
+      DEMO_PASS: ${DEMO_PASS:-admin123}
+    ports:
+      - "3000:3000"
+    depends_on:
+      node-api:
+        condition: service_healthy
