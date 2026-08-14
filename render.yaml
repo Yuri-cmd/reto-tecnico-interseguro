@@ -29,8 +29,5 @@ services:
           type: web
           name: reto-node-api
           envVarKey: JWT_SECRET
-      - key: NODE_API_HOST
-        fromService:
-          type: web
-          name: reto-node-api
-          property: host
+      - key: NODE_API_URL
+        value: https://reto-node-api.onrender.com/api/estadisticas
